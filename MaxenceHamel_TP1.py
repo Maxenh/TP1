@@ -1,29 +1,15 @@
-""" 
-TP1 fonctionnel. 
-RESTE A FAIRE :
-- Verifier la nomenclature des variables
-- Retirer les prints
-- Faire des commentaires sur le code pertinents
-
-"""
-
-
-
-
 import sys
 import json
 import os
 
 
-from PySide6.QtWidgets import QApplication, QTableWidget, QTableWidgetItem, QMainWindow, QWidget, QVBoxLayout, QLineEdit,\
-        QMessageBox, QLabel
+from PySide6.QtWidgets import QApplication, QTableWidget, QTableWidgetItem,\
+      QMainWindow, QWidget, QVBoxLayout, QLineEdit, QMessageBox, QLabel
 from PySide6.QtCore import Qt
 #j'imagine que cette commande permet l'ouverture de la fenetre de l'application
     
-
-
-
 app = QApplication(sys.argv)
+
 try:
     class Window(QWidget):
         def __init__(self):
@@ -45,30 +31,27 @@ try:
          #ouverture du fichier json et lecture de son contenu
         def ouverture_fichier(self):
             try:
-                print("chemin:", self.path)
-                
+               
                 with open(self.path, 'r', encoding='utf-8') as f:
                     self.data = json.load(f)
-                print("contenu:", repr(self.data))
-
-            
-                self.visuel = visuel_tableau(self.data, self.path)
+                
+                self.visuel = Visuel_Tableau(self.data, self.path)
                 self.visuel.show()
                 self.close()
 
             except json.JSONDecodeError:
-                QMessageBox.critical(None, "Erreur de décodage JSON.", "Le fichier JSON est mal formé. Veuillez vérifier son contenu.")
-   
+                QMessageBox.critical(None, "Erreur de décodage JSON.", 
+                                     "Le fichier JSON est mal formé. Veuillez vérifier son contenu.")   
 except FileNotFoundError:
-    QMessageBox.critical(None, "Fichier JSON introuvable.", "Veuillez vérifier le chemin d'accès du fichier JSON.")   
-
+    QMessageBox.critical(None, "Fichier JSON introuvable.", 
+                         "Veuillez vérifier le chemin d'accès du fichier JSON.")   
 
 
 
 try:
 
     #creation d'un visuel plus beau pour le tableau en utilisant QMainWindow
-    class visuel_tableau(QMainWindow):
+    class Visuel_Tableau(QMainWindow):
         def __init__(self, data, path):
             super().__init__()
             self.setWindowTitle("Tableau JSON")
@@ -85,7 +68,11 @@ try:
 
                 
             #mise en place des noms des colonnes
-            colonnes = ["id", "nom", "categorie", "format", "polygones", "statut", "auteur", "date_creation", "prix", "taille_fichier" ]
+            colonnes = [
+                "id", "nom", "categorie", "format", 
+                "polygones", "statut", "auteur", 
+                "date_creation", "prix", "taille_fichier" 
+                ]
         
 
             self.setCentralWidget(self.json_tableau)
@@ -146,16 +133,16 @@ try:
             
 
             #calcul de la taille du fichier json
-            taille = os.path.getsize(self.path)
-            t_ko = taille / 1024
-            print(f"Taille du fichier : {t_ko:.2f} Ko")
+            st_taille = os.path.getsize(self.path)
+            t_ko = st_taille / 1024
 
             #obtenir le nom du fichier json
-            nom_fichier = os.path.basename(self.path)
-            print(f"Nom du fichier : {nom_fichier}")
+            st_nom_fichier = os.path.basename(self.path)
 
             #affichage du nom et de la taille du fichier json dans l'application
-            info_label = QLabel(f" Nom du fichier : {nom_fichier}  |  Taille du fichier : {t_ko:.2f} Ko | Nombre d'items : {len(self.data)}")
+            info_label = QLabel(
+                f" Nom du fichier : {st_nom_fichier}  |  Taille du fichier : {t_ko:.2f} Ko | Nombre d'items : {len(self.data)}"
+                )
             apparence_du_tableau.addWidget(info_label)
 
         try:
@@ -174,21 +161,19 @@ try:
                             break
                     self.json_tableau.setRowHidden(ligne, not correspondance)    
                 if not resultats:
-                    QMessageBox.information(None, "Aucune correspondance trouvée.", "Aucun résultat ne correspond à votre recherche.")
+                    QMessageBox.information(None, "Aucune correspondance trouvée.", 
+                                            "Aucun résultat ne correspond à votre recherche.")
                     
            
                            
         except Exception as e:
-            QMessageBox.critical(None, "Erreur lors de la recherche.", f"Une erreur est survenue lors de la recherche : {str(e)}") 
-
-
-
-        
-
+            QMessageBox.critical(None, "Erreur lors de la recherche.", 
+                                 f"Une erreur est survenue lors de la recherche : {str(e)}") 
 
 
 except Exception as b:
-    QMessageBox.critical(None, "Erreur lors de la création du tableau.", f"Une erreur est survenue lors de la création du tableau : {str(b)}")
+    QMessageBox.critical(None, "Erreur lors de la création du tableau.", 
+                         f"Une erreur est survenue lors de la création du tableau : {str(b)}")
   
 
 window = Window()
